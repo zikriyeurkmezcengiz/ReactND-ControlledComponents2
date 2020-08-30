@@ -2,20 +2,32 @@ import React from "react";
 import logo from "../logo.svg";
 import "../App.css";
 import CreateNewItem from "./CreateNewItem";
+import DeleteItem from "./DeleteItem";
 import ItemList from "./ItemList";
-import DeleteLastItem from "./DeleteLastItem";
 
 class App extends React.Component {
   state = {
+    value: "",
     items: [],
   };
 
-  handleAddItem = (item) => {
-    this.setState((prevState) => ({ items: [...prevState.items, item] }));
+  handleChange = (event) => {
+    this.setState({ value: event.target.value });
   };
 
-  handleDeleteLastItem = (event) => {
+  addItem = (event) => {
+    event.preventDefault();
+    this.setState((oldState) => ({
+      items: [...oldState.items, this.state.value],
+    }));
+  };
+
+  deleteLastItem = (event) => {
     this.setState((prevState) => ({ items: this.state.items.slice(0, -1) }));
+  };
+
+  inputIsEmpty = () => {
+    return this.state.value === "";
   };
 
   noItemsFound = () => {
@@ -30,10 +42,16 @@ class App extends React.Component {
           <h1 className="App-title">ReactND - Coding Practice</h1>
         </header>
         <h2>Shopping List</h2>
-        <CreateNewItem onAddItem={this.handleAddItem} />
-        <DeleteLastItem
-          onDeleteLastItem={this.handleDeleteLastItem}
-          buttonDisabled={this.noItemsFound()}
+
+        <CreateNewItem
+          value={this.state.value}
+          handleChange={this.handleChange}
+          inputIsEmpty={this.inputIsEmpty}
+          addItem={this.addItem}
+        />
+        <DeleteItem
+          deleteLastItem={this.deleteLastItem}
+          noItemsFound={this.noItemsFound}
         />
         <ItemList items={this.state.items} />
       </div>
